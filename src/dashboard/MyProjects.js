@@ -462,15 +462,14 @@ const MyProjects = () => {
               onChange={(e) => setCity(e.target.value)}
             >
               <option value="">City</option>
-              <option value="Nashik">Nashik</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Pune">Pune</option>
-              <option value="Delhi">Delhi</option>
+              <option value="Ahmedabad">Ahmedabad</option>
               <option value="Bangalore">Bengaluru</option>
               <option value="Chennai">Chennai</option>
+              <option value="Delhi">Delhi</option>
               <option value="Hyderabad">Hyderabad</option>
               <option value="Kolkata">Kolkata</option>
-              <option value="Ahmedabad">Ahmedabad</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Pune">Pune</option>
             </select>
             {/* <div className="relative md:mt-0">
               <input
@@ -686,8 +685,8 @@ const MyProjects = () => {
           <div className="flex items-center justify-center mt-6 space-x-3">
             <button
               className={`px-3 py-2 border rounded-full ${currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-gray-100"
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-100"
                 }`}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
@@ -699,8 +698,8 @@ const MyProjects = () => {
               <button
                 key={index}
                 className={`w-10 h-10 flex items-center justify-center rounded-full text-lg font-medium ${currentPage === index + 1
-                    ? "my-border my-text"
-                    : "text-gray-500 hover:bg-gray-100"
+                  ? "my-border my-text"
+                  : "text-gray-500 hover:bg-gray-100"
                   }`}
                 onClick={() => setCurrentPage(index + 1)}
               >
@@ -710,8 +709,8 @@ const MyProjects = () => {
 
             <button
               className={`px-3 py-2 border rounded-full ${currentPage === totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-gray-100"
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-100"
                 }`}
               onClick={() =>
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))

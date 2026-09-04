@@ -16,15 +16,15 @@ const Cities = React.memo(({ data }) => {
   // }, [data]);
 
 
-useEffect(() => {
-  if (Array.isArray(data.data) && data.data.length > 0) {
-    setCitiesData(data.data);
-    setLoading(false);
-  } else {
-    setCitiesData([]);
-    setLoading(true);
-  }
-}, [data]);
+  useEffect(() => {
+    if (Array.isArray(data.data) && data.data.length > 0) {
+      setCitiesData(data.data);
+      setLoading(false);
+    } else {
+      setCitiesData([]);
+      setLoading(true);
+    }
+  }, [data]);
 
   const cities = useMemo(() => [
     { name: "Mumbai", imageUrl: "/image/mumbai.jpg", properties: "0" },
@@ -58,12 +58,19 @@ useEffect(() => {
       .sort((a, b) => b.propertyCount - a.propertyCount); // sort descending
   }, [cities, citiesData]);
 
+  // const handleCityClick = useCallback((cityName) => {
+  //   history.push({
+  //     pathname: `/citywiseproperties/${encodeURIComponent(cityName)}`
+  //   });
+  // }, [history]);
+
   const handleCityClick = useCallback((cityName) => {
+    sessionStorage.setItem("selectedCity", cityName);
+
     history.push({
       pathname: `/citywiseproperties/${encodeURIComponent(cityName)}`
     });
   }, [history]);
-
   const sliderSettings = {
     dots: true,
     infinite: true,

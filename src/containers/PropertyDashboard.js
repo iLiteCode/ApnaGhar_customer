@@ -37,6 +37,7 @@ import { useCity } from "./SearchContext";
 import ContactDetails from "../containers/ContactDetails";
 import { FaWhatsapp, FaPhone } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
+import { getResultsTitle } from "./getResultsTitle";
 const userLocation = JSON.parse(sessionStorage.getItem("userLocation"));
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -61,8 +62,10 @@ const PropertyDashboard = () => {
   const [squareFtDropdownOpen, setSquareFtDropdownOpen] = useState(false);
   const location = useLocation();
   const propertytype = location.state?.propertyType;
+  const locationCity = location.state?.cityName || "";
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalResults, setTotalResults] = useState(0);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [propertyType, setPropertyType] = useState("");
@@ -488,10 +491,6 @@ const PropertyDashboard = () => {
   ];
 
   const rentPriceOptions = [
-    1000,
-    2000,
-    3000,
-    4000,
     5000,
     6000,
     7000,
@@ -521,10 +520,6 @@ const PropertyDashboard = () => {
   ];
 
   const pgPriceOptions = [
-    1000,
-    2000,
-    3000,
-    4000,
     5000,
     6000,
     7000,
@@ -583,7 +578,18 @@ const PropertyDashboard = () => {
   ];
 
   useEffect(() => {
-    if (propertytype) {
+    if (!propertytype) return;
+
+    if (propertytype === "Commercial") {
+      setBuildingType("Commercial");
+      setPropertyType("");
+    } else if (propertytype === "Plot/Land") {
+      setPropertyType("Buy");
+      setPropertyType2(["Plot/Land"]);
+    } else if (propertytype === "Buy" || propertytype === "Rent") {
+      setPropertyType(propertytype);
+      setBuildingType("Residential");
+    } else {
       setPropertyType(propertytype);
     }
   }, [propertytype]);
@@ -763,43 +769,66 @@ const PropertyDashboard = () => {
 
   const fetchProperties = async (propertytype) => {
     try {
-      const payloadKey =
-        propertytype === "Commercial" || propertytype === "Residential"
-          ? "building_type"
-          : propertytype === "Plot/Land"
-            ? "property_type"
-            : "property_category_type";
+      setLoading(true);
 
       const formData = new FormData();
+
       formData.append("user_id", accessToken);
-      formData.append(payloadKey, propertytype);
+
+      if (propertytype === "Buy" || propertytype === "Rent") {
+        formData.append("property_category_type", propertytype);
+        formData.append("building_type", "Residential");
+      } else {
+        const payloadKey =
+          propertytype === "Commercial" || propertytype === "Residential"
+            ? "building_type"
+            : propertytype === "Plot/Land"
+              ? "property_type"
+              : "property_category_type";
+
+        formData.append(payloadKey, propertytype);
+      }
+
       formData.append("page", currentPage);
       formData.append("page_size", itemsPerPage);
-      formData.append("city_name", searchCity);
-      formData.append("city_name", searchCity);
-      if (appliedSortBy) formData.append("sort_by", appliedSortBy); // newest | oldest | price_low | price_high
-      if (appliedVerifiedOnly) formData.append("verified", true);
+      formData.append("city_name", searchCity || locationCity);
+
+      if (appliedSortBy) {
+        formData.append("sort_by", appliedSortBy);
+      }
+
+      if (appliedVerifiedOnly) {
+        formData.append("verified", true);
+      }
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/cust_api/search_location`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
       );
 
       if (response.status === 200 && response.data.status === 1) {
         setProperties(response.data.data);
         setTotalPages(response.data.total_pages || 1);
+        setTotalResults(response.data.total_count || 0);
+        setError(null);
       } else {
         setError("No properties available");
         setProperties([]);
         setTotalPages(0);
+        setTotalResults(0);
       }
     } catch (error) {
+      console.error("Fetch Properties Error:", error);
+
       setError("Failed to load properties.");
       setProperties([]);
       setTotalPages(0);
+      setTotalResults(0);
     } finally {
       setLoading(false);
     }
@@ -1189,14 +1218,18 @@ const PropertyDashboard = () => {
       if (response.status === 200 && response.data.status === 1) {
         setProperties(response.data.data);
         setTotalPages(response.data.total_pages || 1);
+        setTotalResults(response.data.total_count || 0);
+        console.log("Total Results:", response.data.total_count);
       } else {
         setProperties([]);
         setTotalPages(0);
+        setTotalResults(0);
         setError("No properties available");
       }
     } catch (error) {
       setProperties([]);
       setTotalPages(0);
+      setTotalResults(0);
       setError("Failed to load properties.");
     } finally {
       setLoading(false);
@@ -1884,6 +1917,8 @@ const PropertyDashboard = () => {
                   // Auto-set building type
                   if (val === "Commercial Buy" || val === "Commercial Lease") {
                     setBuildingType("Commercial");
+                  } else if (val === "Buy" || val === "Rent") {
+                    setBuildingType("Residential");
                   } else {
                     setBuildingType("");
                   }
@@ -1906,6 +1941,8 @@ const PropertyDashboard = () => {
                 value={buildingType}
                 onChange={(e) => setBuildingType(e.target.value)}
                 disabled={
+                  propertyType === "Buy" ||
+                  propertyType === "Rent" ||
                   propertyType === "Commercial Buy" ||
                   propertyType === "Commercial Lease"
                 }
@@ -3399,19 +3436,38 @@ const PropertyDashboard = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-4 mt-4 sm:flex-row sm:justify-end ">
-          <button
-            onClick={handleButtonClick}
-            className="w-40 p-3 text-rose-700 my-border rounded-md hover:bg-gray-300 focus:outline-none"
-          >
-            {filtersApplied ? "Reset Filters" : "Apply Filter"}
-          </button>
-          <button
-            className="w-40 p-3 my-border rounded-md hover:bg-gray-300 focus:outline-none"
-            onClick={handleSaveSearch}
-          >
-            Save Search
-          </button>
+        <div className="flex items-center justify-between px-6 mt-4 mb-3">
+          {/* Left Side */}
+          <h2 className="text-2xl font-bold text-gray-900">
+            <span className="text-[#8B1E3F]">{totalResults}</span> Results
+            <span className="mx-3 text-gray-400">|</span>
+            <span>
+              {getResultsTitle({
+                bhkType,
+                propertyType,
+                propertyType2,
+                buildingType,
+                filtersApplied,
+              })}
+            </span>
+          </h2>
+
+          {/* Right Side */}
+          <div className="flex gap-4">
+            <button
+              onClick={handleButtonClick}
+              className="w-40 p-3 text-rose-700 my-border rounded-md hover:bg-gray-300 focus:outline-none"
+            >
+              {filtersApplied ? "Reset Filters" : "Apply Filter"}
+            </button>
+
+            <button
+              className="w-40 p-3 my-border rounded-md hover:bg-gray-300 focus:outline-none"
+              onClick={handleSaveSearch}
+            >
+              Save Search
+            </button>
+          </div>
         </div>
       </div>
 

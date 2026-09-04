@@ -13,10 +13,10 @@ const DownloadHouzzaShots = () => {
         {/* Left Section - Text and Input */}
         <div className="lg:w-1/2 text-start">
           <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 leading-snug">
-            Download NoWayBroker Shorts
+            Download ApnaGhar Shorts
           </h1>
           <p className="text-gray-600 mt-4 text-lg">
-            Get the buzz, the trends, and the talk—jump into the NoWayBroker Shorts
+            Get the buzz, the trends, and the talk—jump into the ApnaGhar Shorts
             and vibe with the real estate tribe!
           </p>
           <div className="flex flex-col sm:flex-row items-center mt-6 gap-4">

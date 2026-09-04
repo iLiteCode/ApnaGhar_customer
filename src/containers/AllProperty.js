@@ -548,9 +548,9 @@ const AllProperty = () => {
                       className="w-full h-48 object-cover rounded-t-2xl"
                     />
 
-                    {/* 10 Days NoWayBroker Tag (Top Left) */}
+                    {/* 10 Days ApnaGhar Tag (Top Left) */}
                     <span className="absolute top-2 left-2 bg-gray-800/60 backdrop-blur-sm text-white text-xs font-normal py-1 px-2 rounded-full">
-                      10 Days NoWayBroker
+                      10 Days ApnaGhar
                     </span>
 
                     {/* Virtual Tour & Heart Icon (Top Right) */}
@@ -696,8 +696,8 @@ const AllProperty = () => {
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
                   className={`mx-1 px-3 py-1 rounded-full text-sm ${currentPage === i + 1
-                      ? "my-border text-black"
-                      : " text-gray-700"
+                    ? "my-border text-black"
+                    : " text-gray-700"
                     }`}
                 >
                   {i + 1}
@@ -711,8 +711,8 @@ const AllProperty = () => {
                 }
                 disabled={currentPage === totalPages}
                 className={`w-8 h-8 flex items-center justify-center rounded-full  border-2 border-gray-300  ${currentPage === totalPages
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
                   }`}
               >
                 <MdOutlineNavigateNext className="text-xl text-gray-700" />

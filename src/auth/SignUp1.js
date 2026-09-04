@@ -391,7 +391,7 @@ const SignUp1 = ({ onClose, isOpen, defaultMobile }) => {
               />
               <span>
                 <span className="mr-1 text-xl font-bold text-red-500">*</span>I
-                agree to NoWayBroker{" "}
+                agree to ApnaGhar{" "}
                 <span
                   onClick={goToTermsAndConditions}
                   className="mr-2 font-medium my-text cursor-pointer hover:underline"

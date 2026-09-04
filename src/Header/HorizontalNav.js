@@ -247,7 +247,13 @@ const HorizontalNav = () => {
             <ul className="flex flex-col items-center w-full p-0 m-0 space-y-4 md:flex-row md:space-y-0 md:space-x-4 lg:space-x-8 md:w-auto">
               <li>
                 <Link
-                  to={{ pathname: "/property", state: { propertyType: "Buy" } }}
+                  to={{
+                    pathname: "/property",
+                    state: {
+                      propertyType: "Buy",
+                      cityName: sessionStorage.getItem("cityName") || "",
+                    },
+                  }}
                   className="text-base font-medium tracking-wider text-gray-600 no-underline transition lg:text-lg hover:my-text hover:no-underline whitespace-nowrap"
                 >
                   For Buyers
@@ -257,7 +263,10 @@ const HorizontalNav = () => {
                 <Link
                   to={{
                     pathname: "/property",
-                    state: { propertyType: "Rent" },
+                    state: {
+                      propertyType: "Rent",
+                      cityName: sessionStorage.getItem("cityName") || "",
+                    },
                   }}
                   className="text-base font-medium tracking-wider text-gray-600 no-underline transition lg:text-lg hover:my-text hover:no-underline whitespace-nowrap"
                 >
@@ -266,7 +275,13 @@ const HorizontalNav = () => {
               </li>
               <li>
                 <Link
-                  to={`/advisordashboard?label=Owner`}
+                  to={{
+                    pathname: "/advisordashboard",
+                    search: "?label=Owner",
+                    state: {
+                      cityName: sessionStorage.getItem("cityName") || "",
+                    },
+                  }}
                   className="text-base font-medium tracking-wider text-gray-600 no-underline transition lg:text-lg hover:my-text hover:no-underline whitespace-nowrap"
                 >
                   For Owners
@@ -274,7 +289,13 @@ const HorizontalNav = () => {
               </li>
               <li>
                 <Link
-                  to={`/advisordashboard?label=Builder`}
+                  to={{
+                    pathname: "/advisordashboard",
+                    search: "?label=Builder",
+                    state: {
+                      cityName: sessionStorage.getItem("cityName") || "",
+                    },
+                  }}
                   className="text-base font-medium tracking-wider text-gray-600 no-underline transition lg:text-lg hover:my-text hover:no-underline whitespace-nowrap"
                 >
                   For Builders

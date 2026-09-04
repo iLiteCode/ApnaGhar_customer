@@ -39,6 +39,7 @@ import { faShareNodes } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom"; // import for routing
 import { PiCubeFocus, PiCricketThin } from "react-icons/pi";
 import { useParams, useLocation } from "react-router-dom";
+import { useCity } from "./SearchContext";
 import { toast } from "react-toastify";
 import { FiUser } from "react-icons/fi";
 import Login1 from "../auth/Login1";
@@ -115,6 +116,7 @@ const Detail = ({ propertyData }) => {
   const [propertyDetails, setPropertyDetails] = useState({});
   const userId = sessionStorage.getItem("accessToken");
   const history = useHistory();
+  const { searchCity } = useCity();
   const [currentShareUrl, setCurrentShareUrl] = useState("");
   const [activeShareId, setActiveShareId] = useState(null);
   const [tourSchedule, setTourSchedule] = useState([]);
@@ -229,9 +231,16 @@ const Detail = ({ propertyData }) => {
 
   const fetchRecommendedProperties = async () => {
     try {
+      const cityName =
+        searchCity && searchCity.trim() !== ""
+          ? searchCity.trim()
+          : sessionStorage.getItem("cityName") || "";
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/cust_api/get_featured_property`,
-        { user_id: userId },
+        {
+          user_id: userId,
+          city_name: cityName,
+        },
       );
       if (response.data.status === 1 && Array.isArray(response.data.data)) {
         setProperties(response.data.data);
@@ -1316,7 +1325,7 @@ const Detail = ({ propertyData }) => {
                   {/* Watermark */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <span className="text-4xl md:text-3xl font-extrabold text-white rotate-[-30deg] opacity-40 select-none">
-                      NowayBroker
+                      ApnaGhar
                     </span>
                   </div>
                 </div>
@@ -1332,7 +1341,7 @@ const Detail = ({ propertyData }) => {
                       />
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <span className="text-4xl md:text-3xl font-extrabold text-white rotate-[-30deg] opacity-40 select-none">
-                          NowayBroker
+                          ApnaGhar
                         </span>
                       </div>
                     </div>
@@ -1354,7 +1363,7 @@ const Detail = ({ propertyData }) => {
                           />
                           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <span className="text-4xl md:text-3xl font-extrabold text-white rotate-[-30deg] opacity-40 select-none">
-                              NowayBroker
+                            ApnaGhar
                             </span>
                           </div>
                         </div>
@@ -1393,7 +1402,7 @@ const Detail = ({ propertyData }) => {
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                   <span className="text-4xl md:text-3xl font-extrabold text-white rotate-[-30deg] opacity-40 select-none">
-                                    NowayBroker
+                                ApnaGhar
                                   </span>
                                 </div>
                               </div>
@@ -1787,7 +1796,7 @@ const Detail = ({ propertyData }) => {
                     />
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <span className="text-4xl md:text-3xl font-extrabold text-white rotate-[-30deg] opacity-40 select-none">
-                        NowayBroker
+                        ApnaGhar
                       </span>
                     </div>
                   </div>

@@ -22,27 +22,27 @@ const Home = () => {
 
   const [homeData, setHomeData] = useState({
     recommendedProperties: {
-  status: 0,
-  data: [],
-},
+      status: 0,
+      data: [],
+    },
     offersForYou: [],
     spotlight: {
-  status: 0,
-  data: [],
-},
+      status: 0,
+      data: [],
+    },
     manyMore: {
-    status: 0,
-    data: [],
-  },
+      status: 0,
+      data: [],
+    },
     cities: [],
     adviser: {},
   });
 
   const [ownerProperties, setOwnerProperties] = useState([]);
   const [ownerData, setOwnerData] = useState({
-  status: 0,
-  data: [],
-});
+    status: 0,
+    data: [],
+  });
 
   const [buyData, setBuyProperty] = useState({
     status: 0,
@@ -54,6 +54,7 @@ const Home = () => {
       formData.append("page", 1);
       formData.append("page_size", 10);
       formData.append("property_category_type", "Buy");
+      formData.append("building_type", "Residential");
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/cust_api/filter_property`,
@@ -78,34 +79,34 @@ const Home = () => {
     }
   };
 
-const [offersData, setOffersData] = useState({
-  status: 0,
-  data: [],
-});
-const fetchOffers = async () => {
-  try {
-    const formData = new FormData();
-    formData.append("page", 1);
-    formData.append("page_size", 10);
+  const [offersData, setOffersData] = useState({
+    status: 0,
+    data: [],
+  });
+  const fetchOffers = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("page", 1);
+      formData.append("page_size", 10);
 
-    // if (userId) {
-    //   formData.append("user_id", userId);
-    // }
+      // if (userId) {
+      //   formData.append("user_id", userId);
+      // }
 
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/cust_api/get_offer`,
-      formData
-    );
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/cust_api/get_offer`,
+        formData
+      );
 
-    setOffersData(response.data);
-  } catch (error) {
-    console.error("Error fetching offers:", error);
-    setOffersData({
-      status: 0,
-      data: [],
-    });
-  }
-};
+      setOffersData(response.data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+      setOffersData({
+        status: 0,
+        data: [],
+      });
+    }
+  };
   const [commercialData, setCommercialData] = useState({
     status: 0,
     data: [],
@@ -116,7 +117,8 @@ const fetchOffers = async () => {
       const formData = new FormData();
       formData.append("page", 1);
       formData.append("page_size", 10);
-      formData.append("property_category_type", "Commercial Buy");
+      formData.append("property_category_type", "Buy");
+      formData.append("building_type", "Commercial");
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/cust_api/filter_property`,
@@ -167,20 +169,20 @@ const fetchOffers = async () => {
       );
       if (response.data) {
         setHomeData({
-         recommendedProperties: response.data.featured_properties || {
-  status: 0,
-  data: [],
-},
+          recommendedProperties: response.data.featured_properties || {
+            status: 0,
+            data: [],
+          },
           offersForYou: response.data.offers || [],
           spotlight: response.data.projects || {
-  status: 0,
-  data: [],
-},
-         manyMore:
-  response.data.recommended_properties || {
-    status: 0,
-    data: [],
-  },
+            status: 0,
+            data: [],
+          },
+          manyMore:
+            response.data.recommended_properties || {
+              status: 0,
+              data: [],
+            },
           cities: response.data.city_property_count || [],
           adviser: response.data.user_type_property_count || {},
         });
@@ -209,13 +211,13 @@ const fetchOffers = async () => {
       );
 
       if (response.data.status === 1) {
-  setOwnerProperties(response.data.data || []);
+        setOwnerProperties(response.data.data || []);
 
-  setOwnerData({
-    status: 1,
-    data: response.data.data || [],
-  });
-}
+        setOwnerData({
+          status: 1,
+          data: response.data.data || [],
+        });
+      }
     } catch (error) {
       console.error("Owner API Error:", error);
     }
@@ -295,7 +297,7 @@ const fetchOffers = async () => {
 
     const debounceFetch = setTimeout(() => {
       fetchHomeData();
-       fetchOffers();
+      fetchOffers();
       fetchOwnerProperties();
     }, 300);
 
@@ -326,11 +328,11 @@ const fetchOffers = async () => {
   }, [currentShareUrl]);
   //console.log("ownerProperties", ownerProperties);
   console.log("Recommended:", homeData.recommendedProperties);
-console.log("Spotlight:", homeData.spotlight);
+  console.log("Spotlight:", homeData.spotlight);
   return (
     <>
       <Helmet>
-        <title>NOWAYBROKER - Home</title>
+        <title>APNAGHAR - Home</title>
         <meta name="description" content="sign up page" />
       </Helmet>
 

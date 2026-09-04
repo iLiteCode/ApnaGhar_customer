@@ -9120,8 +9120,8 @@ Make it engaging, attractive, and human-like.
                             type="date"
                             name="possession_date"
                             className={`w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-rose-500 outline-none ${formErrors.possession_date
-                                ? "border-red-600"
-                                : "border-rose-300"
+                              ? "border-red-600"
+                              : "border-rose-300"
                               }`}
                             value={formData.possession_date || ""}
                             min={new Date().toISOString().split("T")[0]}
@@ -9171,7 +9171,7 @@ Make it engaging, attractive, and human-like.
                   {/* Header Section */}
                   <div className="mb-6">
                     <h2 className="text-2xl font-semibold text-gray-900">
-                      Property Info
+                      Generate Project Information with AI
                     </h2>
                     <p className="text-gray-500">
                       Details about the property, including an overview and

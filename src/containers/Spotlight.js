@@ -433,375 +433,375 @@ const Spotlights = ({
           -mx-2 / px-2 on the slide gives a tight, consistent 16px gap between
           cards (8px on each side) instead of the old, uneven wide gap. */}
       {data?.status === 0 ? (
-  <Slider
-    ref={sliderRef}
-    {...settings}
-    className="mx-auto -mx-2 [&_.slick-track]:flex [&_.slick-track]:items-stretch [&_.slick-slide]:h-auto [&_.slick-slide>div]:h-full"
-  >
-    {[1, 2, 3, 4].map((item) => (
-      <div key={item}>
-        <PropertyCardSkeleton />
-      </div>
-    ))}
-  </Slider>
-) : (
-      <Slider
-        ref={sliderRef}
-        {...settings}
-        className="mx-auto -mx-2 [&_.slick-track]:flex [&_.slick-track]:items-stretch [&_.slick-slide]:h-auto [&_.slick-slide>div]:h-full"
-      >
-        {projectList.map((project, index) => {
-          const isCommercial =
-            project.property_category === "Commercial" ||
-            (project.commercial_units && project.commercial_units.length > 0);
+        <Slider
+          ref={sliderRef}
+          {...settings}
+          className="mx-auto -mx-2 [&_.slick-track]:flex [&_.slick-track]:items-stretch [&_.slick-slide]:h-auto [&_.slick-slide>div]:h-full"
+        >
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item}>
+              <PropertyCardSkeleton />
+            </div>
+          ))}
+        </Slider>
+      ) : (
+        <Slider
+          ref={sliderRef}
+          {...settings}
+          className="mx-auto -mx-2 [&_.slick-track]:flex [&_.slick-track]:items-stretch [&_.slick-slide]:h-auto [&_.slick-slide>div]:h-full"
+        >
+          {projectList.map((project, index) => {
+            const isCommercial =
+              project.property_category === "Commercial" ||
+              (project.commercial_units && project.commercial_units.length > 0);
 
-          const commercialUnits =
-            project.commercial_units && project.commercial_units.length > 0
-              ? project.commercial_units
-              : [];
-
-          // Each card shows its own price exactly as provided by the API:
-          // when `residential_units` includes a per-BHK price, that price is
-          // used as-is (no two cards share a value unless the data does).
-          // Only when the API sends just a comma list of BHK types with no
-          // per-unit pricing do all cards fall back to the project's average
-          // price — this is a data-availability fallback, not fabricated UI.
-          // Resolves the project's overall/starting price from whichever
-          // field name the backend actually sends — some responses use
-          // average_project_price, others use starting_price / min_price /
-          // avg_price. Tries each in order and returns the first real value.
-
-          /* ====================================================================
-             FIX: Replace the price-resolution block inside the `visibleProjects.map(...)`
-             in ProjectList.js with this. The bug was that ProjectList.js read units
-             from `project.residential_units` (a field the API doesn't send) instead
-             of `project.project_properties` (the field Spotlights.js actually uses),
-             and it was missing the computed min–max range fallback for price.
-             ==================================================================== */
-
-          // Each card shows its own price exactly as provided by the API:
-          // when `project_properties` includes a per-BHK price, that price is
-          // used as-is. Only when the API sends just a comma list of BHK
-          // types with no per-unit pricing do all cards fall back to the
-          // project's average price — a data-availability fallback, not
-          // fabricated UI.
-
-          // Fallback: if no top-level price field exists, compute a min–max
-          // range from project_properties prices (same as Spotlights.js).
-          const propertyPrices = (project.project_properties || [])
-            .map((p) => Number(p.price))
-            .filter((p) => !isNaN(p) && p > 0);
-
-          const computedRangePrice =
-            propertyPrices.length === 0
-              ? null
-              : propertyPrices.length === 1
-                ? propertyPrices[0]
-                : `${Math.min(...propertyPrices)} - ${Math.max(...propertyPrices)}`;
-
-          // Resolves the project's overall/starting price from whichever field
-          // name the backend actually sends.
-          const resolvedProjectPrice =
-            project.average_project_price ||
-            project.starting_price ||
-            project.min_price ||
-            project.avg_price ||
-            project.price ||
-            computedRangePrice ||
-            null;
-
-          // 👇 THE ACTUAL FIX: use `project_properties`, not `residential_units`
-          const residentialUnits =
-            project.project_properties && project.project_properties.length > 0
-              ? project.project_properties.map((u) => ({
-                ...u,
-                type: u.bhk_type || u.project_type,
-                price:
-                  Number(
-                    u.price ||
-                    u.property_price ||
-                    u.unit_price ||
-                    u.configuration_price ||
-                    u.amount ||
-                    resolvedProjectPrice
-                  ),
-              }))
-              : project.congfigurations
-                ? project.congfigurations.split(",").map((c) => ({
-                  type: c.trim().includes("BHK")
-                    ? c.trim()
-                    : `${c.trim()} BHK`,
-                  price: resolvedProjectPrice,
-                }))
+            const commercialUnits =
+              project.commercial_units && project.commercial_units.length > 0
+                ? project.commercial_units
                 : [];
 
-          /* ====================================================================
-             Also update the ConfigCarousel call further down — it currently passes
-             `isCommercial ? commercialUnits : residentialUnits`, which is still
-             correct, but now residentialUnits will actually carry real prices.
-             No change needed there once the block above is swapped in.
-             ==================================================================== */
-          const addressArea = project.address_area?.trim();
-          const cityName = project.city_name?.trim();
-          let locationText = "";
-          if (addressArea && cityName) {
-            locationText = addressArea
-              .toLowerCase()
-              .includes(cityName.toLowerCase())
-              ? addressArea
-              : `${addressArea}, ${cityName}`;
-          } else {
-            locationText = addressArea || cityName || "";
-          }
+            // Each card shows its own price exactly as provided by the API:
+            // when `residential_units` includes a per-BHK price, that price is
+            // used as-is (no two cards share a value unless the data does).
+            // Only when the API sends just a comma list of BHK types with no
+            // per-unit pricing do all cards fall back to the project's average
+            // price — this is a data-availability fallback, not fabricated UI.
+            // Resolves the project's overall/starting price from whichever
+            // field name the backend actually sends — some responses use
+            // average_project_price, others use starting_price / min_price /
+            // avg_price. Tries each in order and returns the first real value.
 
-          const distanceKm = getProjectDistance(project);
+            /* ====================================================================
+               FIX: Replace the price-resolution block inside the `visibleProjects.map(...)`
+               in ProjectList.js with this. The bug was that ProjectList.js read units
+               from `project.residential_units` (a field the API doesn't send) instead
+               of `project.project_properties` (the field Spotlights.js actually uses),
+               and it was missing the computed min–max range fallback for price.
+               ==================================================================== */
 
-          // Subtitle now carries the location inline, e.g.
-          // "1,2,3,4 BHK Apartments in Baner, Pune"
-          const subtitle = isCommercial
-            ? (() => {
-              const unitSummary =
-                [
-                  ...new Set(
-                    commercialUnits.map((u) => u.type).filter(Boolean),
-                  ),
-                ].join(", ") ||
-                project.project_type ||
-                "Commercial Space";
-              return locationText
-                ? `${unitSummary} in ${locationText}`
-                : unitSummary;
-            })()
-            : project.congfigurations
+            // Each card shows its own price exactly as provided by the API:
+            // when `project_properties` includes a per-BHK price, that price is
+            // used as-is. Only when the API sends just a comma list of BHK
+            // types with no per-unit pricing do all cards fall back to the
+            // project's average price — a data-availability fallback, not
+            // fabricated UI.
+
+            // Fallback: if no top-level price field exists, compute a min–max
+            // range from project_properties prices (same as Spotlights.js).
+            const propertyPrices = (project.project_properties || [])
+              .map((p) => Number(p.price))
+              .filter((p) => !isNaN(p) && p > 0);
+
+            const computedRangePrice =
+              propertyPrices.length === 0
+                ? null
+                : propertyPrices.length === 1
+                  ? propertyPrices[0]
+                  : `${Math.min(...propertyPrices)} - ${Math.max(...propertyPrices)}`;
+
+            // Resolves the project's overall/starting price from whichever field
+            // name the backend actually sends.
+            const resolvedProjectPrice =
+              project.average_project_price ||
+              project.starting_price ||
+              project.min_price ||
+              project.avg_price ||
+              project.price ||
+              computedRangePrice ||
+              null;
+
+            // 👇 THE ACTUAL FIX: use `project_properties`, not `residential_units`
+            const residentialUnits =
+              project.project_properties && project.project_properties.length > 0
+                ? project.project_properties.map((u) => ({
+                  ...u,
+                  type: u.bhk_type || u.project_type,
+                  price:
+                    Number(
+                      u.price ||
+                      u.property_price ||
+                      u.unit_price ||
+                      u.configuration_price ||
+                      u.amount ||
+                      resolvedProjectPrice
+                    ),
+                }))
+                : project.congfigurations
+                  ? project.congfigurations.split(",").map((c) => ({
+                    type: c.trim().includes("BHK")
+                      ? c.trim()
+                      : `${c.trim()} BHK`,
+                    price: resolvedProjectPrice,
+                  }))
+                  : [];
+
+            /* ====================================================================
+               Also update the ConfigCarousel call further down — it currently passes
+               `isCommercial ? commercialUnits : residentialUnits`, which is still
+               correct, but now residentialUnits will actually carry real prices.
+               No change needed there once the block above is swapped in.
+               ==================================================================== */
+            const addressArea = project.address_area?.trim();
+            const cityName = project.city_name?.trim();
+            let locationText = "";
+            if (addressArea && cityName) {
+              locationText = addressArea
+                .toLowerCase()
+                .includes(cityName.toLowerCase())
+                ? addressArea
+                : `${addressArea}, ${cityName}`;
+            } else {
+              locationText = addressArea || cityName || "";
+            }
+
+            const distanceKm = getProjectDistance(project);
+
+            // Subtitle now carries the location inline, e.g.
+            // "1,2,3,4 BHK Apartments in Baner, Pune"
+            const subtitle = isCommercial
               ? (() => {
-                const bhkSummary = project.congfigurations
-                  .split(",")
-                  .map((c) => c.trim().replace(/\s*BHK/i, ""))
-                  .join(",");
+                const unitSummary =
+                  [
+                    ...new Set(
+                      commercialUnits.map((u) => u.type).filter(Boolean),
+                    ),
+                  ].join(", ") ||
+                  project.project_type ||
+                  "Commercial Space";
                 return locationText
-                  ? `${bhkSummary} BHK Apartments in ${locationText}`
-                  : `${bhkSummary} BHK Apartments`;
+                  ? `${unitSummary} in ${locationText}`
+                  : unitSummary;
               })()
-              : locationText
-                ? `Apartments in ${locationText}`
-                : "Apartments";
+              : project.congfigurations
+                ? (() => {
+                  const bhkSummary = project.congfigurations
+                    .split(",")
+                    .map((c) => c.trim().replace(/\s*BHK/i, ""))
+                    .join(",");
+                  return locationText
+                    ? `${bhkSummary} BHK Apartments in ${locationText}`
+                    : `${bhkSummary} BHK Apartments`;
+                })()
+                : locationText
+                  ? `Apartments in ${locationText}`
+                  : "Apartments";
 
-          return (
-            <div key={index} className="h-full px-2">
-              {/* ==================== CARD — equal height across the row, flex column ====================
+            return (
+              <div key={index} className="h-full px-2">
+                {/* ==================== CARD — equal height across the row, flex column ====================
                   No fixed pixel width / max-width / mx-auto on the card: it simply fills
                   the slide's width (driven by slidesToShow), which is what removes the
                   extra whitespace between cards. min-h keeps every card tall enough that
                   the builder row and both buttons are never clipped; slick's flex-stretch
                   (added on the Slider above) then equalizes every card in the row to the
                   tallest one. */}
-              <div className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-[0_6px_24px_rgba(17,24,39,0.08)] hover:shadow-[0_18px_48px_rgba(17,24,39,0.16)] transition-all duration-300 flex flex-col h-full min-h-[440px] sm:min-h-[460px] lg:min-h-[480px] w-full">
-                {/* ==================== IMAGE SECTION (fixed height) ==================== */}
-                <div className="relative overflow-hidden flex-shrink-0 h-[150px] sm:h-[165px] lg:h-[180px]">
-                  <img
-                    src={project.cover_image}
-                    alt={project.project_name || ""}
-                    className="w-full h-full object-cover cursor-pointer group-hover:scale-105 transition-transform duration-500 ease-out"
-                    onClick={() => handleProjectClick(project._id)}
-                  />
-
-                  {/* Top Left badge — always "New Booking", premium green-gradient pill */}
-                  <div className="absolute top-2 left-2 z-10 flex items-center gap-2">
-                    {/* New Booking */}
-                    <div className="bg-gradient-to-r from-[#8B1E3F] to-[#6D1732] text-white pl-2 pr-2.5 py-1 rounded-full flex items-center gap-1 text-[9px] font-semibold shadow-[0_2px_10px_rgba(139,30,63,0.4)]">
-                      <MdFiberNew size={11} />
-                      <span>New Booking</span>
-                    </div>
-
-                    {/* RERA */}
-                    <div className="bg-gradient-to-r from-[#8B1E3F] to-[#6D1732] text-white px-2.5 py-1 rounded-full flex items-center text-[9px] font-semibold shadow-[0_2px_10px_rgba(139,30,63,0.4)]">
-                      RERA
-                    </div>
-                  </div>
-
-                  {/* Wishlist Heart - Top Right */}
-                  <button
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur flex items-center justify-center hover:scale-110 transition-transform duration-200"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (!sessionStorage.getItem("accessToken")) {
-                        setIsLoginModalOpen(true);
-                        return;
-                      }
-                      if (project.is_favorite) {
-                        removeFromFavoritesRecommendedProperty(
-                          project.favorite_id,
-                          project._id,
-                        );
-                      } else {
-                        addToFavoritesRecommendedProperty(project._id);
-                      }
-                    }}
-                  >
-                    <FaHeart
-                      size={11}
-                      className={
-                        project.is_favorite ? "text-red-500" : "text-white"
-                      }
+                <div className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-[0_6px_24px_rgba(17,24,39,0.08)] hover:shadow-[0_18px_48px_rgba(17,24,39,0.16)] transition-all duration-300 flex flex-col h-full min-h-[440px] sm:min-h-[460px] lg:min-h-[480px] w-full">
+                  {/* ==================== IMAGE SECTION (fixed height) ==================== */}
+                  <div className="relative overflow-hidden flex-shrink-0 h-[150px] sm:h-[165px] lg:h-[180px]">
+                    <img
+                      src={project.cover_image}
+                      alt={project.project_name || ""}
+                      className="w-full h-full object-cover cursor-pointer group-hover:scale-105 transition-transform duration-500 ease-out"
+                      onClick={() => handleProjectClick(project._id)}
                     />
-                  </button>
 
-                  {/* Virtual Tour - Black Glassmorphism, right of heart */}
-                  {project.virtual_tour && (
-                    <a
-                      href={
-                        typeof project.virtual_tour === "string"
-                          ? project.virtual_tour
-                          : undefined
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute top-2 right-10 bg-black/40 backdrop-blur-md border border-white/20 text-white px-1.5 py-1 rounded-lg flex items-center gap-1 text-[9px] font-medium"
-                    >
-                      <FaVideo size={10} />
-                      <span className="hidden sm:inline">Virtual Tour</span>
-                    </a>
-                  )}
+                    {/* Top Left badge — always "New Booking", premium green-gradient pill */}
+                    <div className="absolute top-2 left-2 z-10 flex items-center gap-2">
+                      {/* New Booking */}
+                      <div className="bg-gradient-to-r from-[#8B1E3F] to-[#6D1732] text-white pl-2 pr-2.5 py-1 rounded-full flex items-center gap-1 text-[9px] font-semibold shadow-[0_2px_10px_rgba(139,30,63,0.4)]">
+                        <MdFiberNew size={11} />
+                        <span>New Booking</span>
+                      </div>
 
-                  {/* Property Type Ribbon - Bottom Left */}
-                  {project.property_for && (
-                    <div className="absolute bottom-0 left-0 bg-blue-700 text-white px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide">
-                      {project.property_for}
+                      {/* RERA */}
+                      <div className="bg-gradient-to-r from-[#8B1E3F] to-[#6D1732] text-white px-2.5 py-1 rounded-full flex items-center text-[9px] font-semibold shadow-[0_2px_10px_rgba(139,30,63,0.4)]">
+                        RERA
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                {/* ==================== CARD BODY (fills remaining height) ==================== */}
-                <div
-                  className="cursor-pointer flex flex-col flex-1 min-h-0"
-                  onClick={() => handleProjectClick(project._id)}
-                >
-                  {/* Project Name + Subtitle (BHK + location combined) */}
-                  <div className="px-3.5 pt-3 flex-shrink-0">
-                    <h2 className="text-xl sm:text-[22px] lg:text-2xl leading-tight font-bold text-[#111827] line-clamp-2">
-                      {project.project_name || "No Project Name Available"}
-                    </h2>
-                    <p className="mt-1 text-gray-500 text-[11px] sm:text-xs lg:text-sm line-clamp-2">
-                      {subtitle}
-                    </p>
+                    {/* Wishlist Heart - Top Right */}
+                    <button
+                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur flex items-center justify-center hover:scale-110 transition-transform duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!sessionStorage.getItem("accessToken")) {
+                          setIsLoginModalOpen(true);
+                          return;
+                        }
+                        if (project.is_favorite) {
+                          removeFromFavoritesRecommendedProperty(
+                            project.favorite_id,
+                            project._id,
+                          );
+                        } else {
+                          addToFavoritesRecommendedProperty(project._id);
+                        }
+                      }}
+                    >
+                      <FaHeart
+                        size={11}
+                        className={
+                          project.is_favorite ? "text-red-500" : "text-white"
+                        }
+                      />
+                    </button>
+
+                    {/* Virtual Tour - Black Glassmorphism, right of heart */}
+                    {project.virtual_tour && (
+                      <a
+                        href={
+                          typeof project.virtual_tour === "string"
+                            ? project.virtual_tour
+                            : undefined
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute top-2 right-10 bg-black/40 backdrop-blur-md border border-white/20 text-white px-1.5 py-1 rounded-lg flex items-center gap-1 text-[9px] font-medium"
+                      >
+                        <FaVideo size={10} />
+                        <span className="hidden sm:inline">Virtual Tour</span>
+                      </a>
+                    )}
+
+                    {/* Property Type Ribbon - Bottom Left */}
+                    {project.property_for && (
+                      <div className="absolute bottom-0 left-0 bg-blue-700 text-white px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide">
+                        {project.property_for}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Commercial Property label — only for commercial cards, sits
-                      right above the configuration section */}
-                  {isCommercial && (
-                    <div className="px-3.5 mt-2 flex-shrink-0 flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-gray-700">
-                      <HiOutlineOfficeBuilding className="text-[#A70D2A]" size={13} />
-                      <span>Commercial Property</span>
+                  {/* ==================== CARD BODY (fills remaining height) ==================== */}
+                  <div
+                    className="cursor-pointer flex flex-col flex-1 min-h-0"
+                    onClick={() => handleProjectClick(project._id)}
+                  >
+                    {/* Project Name + Subtitle (BHK + location combined) */}
+                    <div className="px-3.5 pt-3 flex-shrink-0">
+                      <h2 className="text-xl sm:text-[22px] lg:text-2xl leading-tight font-bold text-[#111827] line-clamp-2">
+                        {project.project_name || "No Project Name Available"}
+                      </h2>
+                      <p className="mt-1 text-gray-500 text-[11px] sm:text-xs lg:text-sm line-clamp-2">
+                        {subtitle}
+                      </p>
                     </div>
-                  )}
 
-                  {/* ==================== CONFIGURATION SECTION (fixed height, identical for both types) ====================
+                    {/* Commercial Property label — only for commercial cards, sits
+                      right above the configuration section */}
+                    {isCommercial && (
+                      <div className="px-3.5 mt-2 flex-shrink-0 flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-gray-700">
+                        <HiOutlineOfficeBuilding className="text-[#A70D2A]" size={13} />
+                        <span>Commercial Property</span>
+                      </div>
+                    )}
+
+                    {/* ==================== CONFIGURATION SECTION (fixed height, identical for both types) ====================
                       Three config cards visible at a time (BHK for residential, unit
                       type for commercial). No visible arrows/dots — swipe to reveal more. */}
-                  <div
-                    className={`px-3.5 flex-shrink-0 h-[74px] flex items-center ${isCommercial ? "mt-2" : "mt-2.5"
-                      }`}
-                  >
-                    <ConfigCarousel
-                      units={residentialUnits}
-                      isCommercial={isCommercial}
-                      formatAverageProjectPrice={formatAverageProjectPrice}
-                      getCommercialIcon={getCommercialIcon}
-                    />
-                  </div>
+                    <div
+                      className={`px-3.5 flex-shrink-0 h-[74px] flex items-center ${isCommercial ? "mt-2" : "mt-2.5"
+                        }`}
+                    >
+                      <ConfigCarousel
+                        units={residentialUnits}
+                        isCommercial={isCommercial}
+                        formatAverageProjectPrice={formatAverageProjectPrice}
+                        getCommercialIcon={getCommercialIcon}
+                      />
+                    </div>
 
-                  {/* Spacer pushes builder + buttons to the bottom of the card (margin-top:auto) */}
-                  <div className="mt-auto flex-shrink-0">
-                    {/* ==================== BUILDER SECTION (fixed height) ====================
+                    {/* Spacer pushes builder + buttons to the bottom of the card (margin-top:auto) */}
+                    <div className="mt-auto flex-shrink-0">
+                      {/* ==================== BUILDER SECTION (fixed height) ====================
                         Builder name stays on the left; distance-from-you now replaces
                         the plain location line and sits on the right, vertically
                         centered with the builder block. flex-nowrap + truncation keeps
                         both sides from wrapping or clipping each other. */}
-                    {/* ==================== BUILDER SECTION ====================
+                      {/* ==================== BUILDER SECTION ====================
                         Icon + "Builder" label sit on their own line; the
                         Builder Name and the distance-from-you sit together on
                         the next line, aligned on the same baseline, with a
                         clean 8px gap beneath the label and generous top/bottom
                         padding so the row no longer crowds the divider above it. */}
-                    <div className="mx-3.5 pt-3.5 sm:pt-4 pb-3.5 sm:pb-4 border-t border-gray-100 flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0 overflow-hidden self-center">
-                        {project.property_owner_image &&
-                          !project.property_owner_image.includes(
-                            "default_profile",
-                          ) ? (
-                          <img
-                            src={`${process.env.REACT_APP_API_URL}/media/${project.property_owner_image}`}
-                            alt={project.connect_to_name || "Builder"}
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <FaHardHat className="text-xs text-yellow-700" />
-                        )}
-                      </div>
-
-                      <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
-                        <div className="min-w-0 flex flex-col justify-center">
-                          <p className="text-xs text-gray-500 leading-none mb-0">
-                            Builder
-                          </p>
-                          <h3 className="text-base font-semibold leading-tight text-[#111827] mt-0.5 truncate">
-                            {project.connect_to_name || "Builder"}
-                          </h3>
+                      <div className="mx-3.5 pt-3.5 sm:pt-4 pb-3.5 sm:pb-4 border-t border-gray-100 flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0 overflow-hidden self-center">
+                          {project.property_owner_image &&
+                            !project.property_owner_image.includes(
+                              "default_profile",
+                            ) ? (
+                            <img
+                              src={`${process.env.REACT_APP_API_URL}/media/${project.property_owner_image}`}
+                              alt={project.connect_to_name || "Builder"}
+                              className="object-cover w-full h-full"
+                            />
+                          ) : (
+                            <FaHardHat className="text-xs text-yellow-700" />
+                          )}
                         </div>
 
-                        {distanceKm && (
-                          <div className="flex items-center gap-1 flex-shrink-0">
-                            <FaMapMarkerAlt
-                              className="text-red-600 flex-shrink-0"
-                              size={12}
-                            />
-                            <span className="text-gray-500 text-sm whitespace-nowrap">
-                              {distanceKm} km from you
-                            </span>
+                        <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
+                          <div className="min-w-0 flex flex-col justify-center">
+                            <p className="text-xs text-gray-500 leading-none mb-0">
+                              Builder
+                            </p>
+                            <h3 className="text-base font-semibold leading-tight text-[#111827] mt-0.5 truncate">
+                              {project.connect_to_name || "Builder"}
+                            </h3>
                           </div>
-                        )}
+
+                          {distanceKm && (
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <FaMapMarkerAlt
+                                className="text-red-600 flex-shrink-0"
+                                size={12}
+                              />
+                              <span className="text-gray-500 text-sm whitespace-nowrap">
+                                {distanceKm} km from you
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    {/* ==================== BOTTOM BUTTONS (fixed height, always pinned to bottom) ====================
+                      {/* ==================== BOTTOM BUTTONS (fixed height, always pinned to bottom) ====================
                         grid-cols-2 keeps Brochure and View Details the same width and height
                         so they never overlap or get hidden. */}
-                    <div className="grid grid-cols-2 gap-2 px-3.5 py-3">
-                      <button
-                        className="border-2 border-[#8B1E3F] text-[#8B1E3F] rounded-lg h-9 text-[11px] sm:text-xs font-semibold flex justify-center items-center gap-1.5 hover:bg-[#8B1E3F]/5 transition-colors duration-200"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (project.brochure) {
-                            window.open(
-                              project.brochure,
-                              "_blank",
-                              "noopener,noreferrer",
-                            );
-                          }
-                        }}
-                      >
-                        <FaDownload size={11} />
-                        Brochure
-                      </button>
-                      <button
-                        className="bg-[#8B1E3F] rounded-lg text-white text-[11px] sm:text-xs font-semibold flex justify-center items-center gap-1.5 h-9 hover:bg-[#6D1732] hover:shadow-lg transition-all duration-200"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleProjectClick(project._id);
-                        }}
-                      >
-                        View Details
-                        <FaArrowRight size={11} />
-                      </button>
+                      <div className="grid grid-cols-2 gap-2 px-3.5 py-3">
+                        <button
+                          className="border-2 border-[#8B1E3F] text-[#8B1E3F] rounded-lg h-9 text-[11px] sm:text-xs font-semibold flex justify-center items-center gap-1.5 hover:bg-[#8B1E3F]/5 transition-colors duration-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (project.brochure) {
+                              window.open(
+                                project.brochure,
+                                "_blank",
+                                "noopener,noreferrer",
+                              );
+                            }
+                          }}
+                        >
+                          <FaDownload size={11} />
+                          Brochure
+                        </button>
+                        <button
+                          className="bg-[#8B1E3F] rounded-lg text-white text-[11px] sm:text-xs font-semibold flex justify-center items-center gap-1.5 h-9 hover:bg-[#6D1732] hover:shadow-lg transition-all duration-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleProjectClick(project._id);
+                          }}
+                        >
+                          View Details
+                          <FaArrowRight size={11} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </Slider>
-    )}
+            );
+          })}
+        </Slider>
+      )}
       <div
         id="shareModal"
         className="fixed bottom-0 right-0 items-center justify-center bg-black bg-opacity-50 z-50 hidden"

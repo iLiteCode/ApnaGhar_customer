@@ -405,7 +405,7 @@ const Commercial = ({
                             {allImages.length > 1 ? (
                               <Slider
                                 key={`${property._id}-${allImages.length}-${Date.now()}`}
-                                className="h-40 sm:h-44 md:h-48"
+                                className="h-40 sm:h-44 md:h-48 rounded-t-2xl"
                                 dots
                                 infinite
                                 speed={500}
@@ -454,7 +454,6 @@ const Commercial = ({
                                     {dots}
                                   </div>
                                 )}
-                                className="rounded-t-2xl"
                               >
                                 {allImages.map((imgUrl, idx) => (
                                   <div key={`${property._id}-${idx}`}>

@@ -7,7 +7,7 @@ const Download = () => {
     appstore: "#",
     playstore: "#",
   });
-
+  const [mobileNumber, setMobileNumber] = useState("");
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -39,7 +39,7 @@ const Download = () => {
         {/* Left Section - Text and Input */}
         <div className="lg:w-1/2 text-start">
           <h1 className="text-3xl font-bold leading-snug text-gray-900 lg:text-5xl">
-            Download NoWayBroker Mobile App
+            Download ApnaGhar Mobile App
           </h1>
           <p className="mt-4 text-lg font-bold my-text ">
             Download our top-rated app, made just for you! <br />
@@ -56,8 +56,14 @@ const Download = () => {
               </label>
               <input
                 id="mobileNumber"
-                type="text"
+                type="tel"
                 placeholder="Enter your mobile number"
+                maxLength={10}
+                value={mobileNumber}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setMobileNumber(value);
+                }}
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-rose-600 focus:outline-none"
               />
             </div>

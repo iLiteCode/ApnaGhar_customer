@@ -18,7 +18,7 @@ const AppDownloadPopup = () => {
 
             <h2 className="text-xl font-semibold">Go to Mobile App</h2>
             <p className="text-gray-500 text-sm mt-1">
-              This features only work NoWayBroker App
+              This features only work ApnaGhar App
             </p>
 
             <button className="my-bg text-white px-4 py-2 rounded-lg mt-4 w-full">
