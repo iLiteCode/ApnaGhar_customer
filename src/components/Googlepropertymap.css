@@ -1,0 +1,310 @@
+/* ==========================================================
+   GooglePropertyMap — ApnaGhar styling
+   Brand: #D61F45 (red), #172033 (ink), #64748B (muted), #F1D9DF (border)
+   ========================================================== */
+
+.gpm-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    /* explicit height so Google never gets a 0px box */
+    overflow: hidden;
+    border-radius: inherit;
+    background: #F8FAFC;
+}
+
+.gpm-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- loading / error / empty states ---------- */
+
+.gpm-state {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748B;
+    background: rgba(248, 250, 252, 0.94);
+}
+
+.gpm-state small {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94A3B8;
+}
+
+.gpm-state--error {
+    color: #D61F45;
+}
+
+.gpm-spinner {
+    width: 26px;
+    height: 26px;
+    border: 3px solid #FDE8EC;
+    border-top-color: #D61F45;
+    border-radius: 50%;
+    animation: gpm-spin 0.8s linear infinite;
+}
+
+@keyframes gpm-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.gpm-pill {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    z-index: 2;
+    transform: translateX(-50%);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #D61F45;
+    background: #ffffff;
+    border: 1px solid #F1D9DF;
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(17, 24, 39, 0.10);
+    pointer-events: none;
+}
+
+/* ---------- price markers ---------- */
+
+.gpm-marker {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+}
+
+/* Overlay mode (no Map ID): anchor the pointer tip on the coordinate */
+.gpm-marker--overlay {
+    position: absolute;
+    transform: translate(-50%, -100%);
+}
+
+.gpm-marker-price {
+    padding: 6px 11px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    color: #172033;
+    white-space: nowrap;
+    background: #ffffff;
+    border: 1px solid #F1D9DF;
+    border-radius: 9999px;
+    box-shadow: 0 3px 10px rgba(17, 24, 39, 0.18);
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.gpm-marker-pointer {
+    width: 0;
+    height: 0;
+    margin-top: -1px;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid #ffffff;
+    filter: drop-shadow(0 2px 1px rgba(17, 24, 39, 0.12));
+    transition: border-top-color 0.15s ease;
+}
+
+/* Property without a price label: small round pin instead of an empty pill */
+.gpm-marker--dot .gpm-marker-price {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    background: #D61F45;
+    border: 3px solid #ffffff;
+}
+
+.gpm-marker:hover .gpm-marker-price,
+.gpm-marker:focus-visible .gpm-marker-price,
+.gpm-marker.is-active .gpm-marker-price {
+    color: #ffffff;
+    background: #D61F45;
+    border-color: #D61F45;
+    transform: scale(1.06);
+}
+
+.gpm-marker:hover .gpm-marker-pointer,
+.gpm-marker:focus-visible .gpm-marker-pointer,
+.gpm-marker.is-active .gpm-marker-pointer {
+    border-top-color: #D61F45;
+}
+
+/* ---------- InfoWindow ---------- */
+
+.gm-style .gm-style-iw-c {
+    padding: 0 !important;
+    border-radius: 16px !important;
+}
+
+.gm-style .gm-style-iw-d {
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.gm-style .gm-style-iw-chr {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 3;
+}
+
+.gm-style .gm-style-iw-chr button {
+    width: 30px !important;
+    height: 30px !important;
+    margin: 6px !important;
+    background: rgba(15, 39, 71, 0.6) !important;
+    border-radius: 50% !important;
+}
+
+.gm-style .gm-style-iw-chr button span {
+    background-color: #ffffff !important;
+    margin: 7px !important;
+}
+
+.gpm-info {
+    width: 260px;
+    max-width: 100%;
+    font-family: inherit;
+    color: #172033;
+}
+
+.gpm-info-media {
+    position: relative;
+    height: 140px;
+    background: #F1F5F9;
+}
+
+.gpm-info-media--empty {
+    background: linear-gradient(135deg, #FDF5F7 0%, #FBEEF1 100%);
+}
+
+.gpm-info-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gpm-info-fav {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(15, 39, 71, 0.6);
+    cursor: pointer;
+}
+
+.gpm-info-fav svg {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2;
+}
+
+.gpm-info-fav.is-active svg {
+    fill: #D61F45;
+    stroke: #D61F45;
+}
+
+.gpm-info-body {
+    padding: 12px 14px 14px;
+}
+
+.gpm-info-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #172033;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gpm-info-location {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: #64748B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gpm-info-price {
+    margin: 8px 0 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #D61F45;
+}
+
+.gpm-info-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.gpm-info-chip {
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #1E3A5F;
+    background: rgba(30, 58, 95, 0.1);
+    border-radius: 9999px;
+}
+
+.gpm-info-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, #D61F45 0%, #B91C3C 100%);
+    border: none;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(214, 31, 69, 0.3);
+    cursor: pointer;
+    transition: filter 0.15s ease;
+}
+
+.gpm-info-btn:hover {
+    filter: brightness(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gpm-spinner {
+        animation-duration: 2s;
+    }
+
+    .gpm-marker-price {
+        transition: none;
+    }
+}

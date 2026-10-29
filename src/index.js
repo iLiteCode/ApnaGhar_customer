@@ -12,3 +12,20 @@ ReactDOM.render(
 	</React.StrictMode>,
 	document.getElementById("root")
 );
+
+// Ignore the harmless "ResizeObserver loop" browser warning in development
+// const isResizeObserverError = (message = "") =>
+// 	typeof message === "string" && message.includes("ResizeObserver loop");
+
+// window.addEventListener(
+// 	"error",
+// 	(event) => {
+// 		if (isResizeObserverError(event.message)) {
+// 			event.stopImmediatePropagation();
+// 			event.preventDefault();
+// 		}
+// 	},
+// 	true
+// );
+
+
